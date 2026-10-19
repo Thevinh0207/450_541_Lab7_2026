@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float moveSpeed = 7f;      // units per second
     [SerializeField] private float turnSpeed = 150f;    // degrees per second
     [SerializeField] private float jumpForce = 5f;      // strength of the jump
-   [SerializeField] private float doubleJumpForce = 4f;
+    [SerializeField] private float doubleJumpForce = 4f;
     [Header("Ground Check Settings")]
     [SerializeField] private float groundDistance = 0.5f; // ray length
     [SerializeField] private LayerMask groundMask;        // ground layers
@@ -23,6 +23,11 @@ public class PlayerMovement : MonoBehaviour
     private bool hasDoubleJumped = false;     // one per jump
 
     public bool IsGrounded => isGrounded;
+
+    // Multiplies the normal speed. 1 = normal, 1.5 = 50% faster.
+    // Other scripts (like PlayerPowerUps) are allowed to change it.
+    public float SpeedMultiplier { get; set; } = 1f;
+
 
     private void Start()
     {
@@ -102,7 +107,8 @@ public class PlayerMovement : MonoBehaviour
     private void MovePlayer()
     {
         // Calculate velocity based on current forward vector
-        Vector3 targetVelocity = moveDirection * moveSpeed;
+        Vector3 targetVelocity = moveDirection * moveSpeed * SpeedMultiplier;
+
 
         // Apply movement while preserving vertical velocity (gravity/jumping)
         rb.linearVelocity = new Vector3(targetVelocity.x, rb.linearVelocity.y, targetVelocity.z);
